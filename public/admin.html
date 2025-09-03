@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - Submissions</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f2f2f2; }
+  </style>
+</head>
+<body>
+  <h2>📋 Form Submissions</h2>
+  <table id="submissionsTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Message</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function loadSubmissions() {
+      try {
+        const res = await fetch("https://my-first-project-1-ssb0.onrender.com/submissions");
+        
+        if (!res.ok) {
+          throw new Error("Failed to fetch, status: " + res.status);
+        }
+
+        const data = await res.json();
+
+        const tableBody = document.querySelector("#submissionsTable tbody");
+        tableBody.innerHTML = "";
+
+        data.forEach(sub => {
+          const row = `
+            <tr>
+              <td>${sub.name}</td>
+              <td>${sub.email}</td>
+              <td>${sub.message}</td>
+              <td>${new Date(sub.createdAt).toLocaleString()}</td>
+            </tr>`;
+          tableBody.innerHTML += row;
+        });
+      } catch (err) {
+        console.error("Error loading submissions:", err);
+        alert("❌ Error loading submissions: " + err.message);
+      }
+    }
+
+    // Load when page opens
+    loadSubmissions();
+  </script>
+</body>
+</html>

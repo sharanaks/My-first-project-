@@ -8,10 +8,19 @@
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
     th { background: #f2f2f2; }
+    #loginBox { margin-bottom: 20px; }
+    #submissionsTable { display: none; }
   </style>
 </head>
 <body>
   <h2>📋 Form Submissions</h2>
+
+  <div id="loginBox">
+    <label>Username: <input type="text" id="username" value="admin"></label>
+    <label>Password: <input type="password" id="password" value="secret123"></label>
+    <button onclick="loadSubmissions()">🔑 Login & Load</button>
+  </div>
+
   <table id="submissionsTable">
     <thead>
       <tr>
@@ -27,14 +36,25 @@
   <script>
     async function loadSubmissions() {
       try {
-        const res = await fetch("https://my-first-project-1-ssb0.onrender.com/submissions");
-        
+        const user = document.getElementById("username").value.trim();
+        const pass = document.getElementById("password").value.trim();
+        const authHeader = "Basic " + btoa(user + ":" + pass);
+
+        // ✅ Use relative URL so it works locally AND on Render
+        const apiUrl = window.location.origin + "/submissions";
+
+        const res = await fetch(apiUrl, {
+          headers: { "Authorization": authHeader }
+        });
+
+        if (res.status === 401) {
+          throw new Error("Unauthorized - check username/password");
+        }
         if (!res.ok) {
           throw new Error("Failed to fetch, status: " + res.status);
         }
 
         const data = await res.json();
-
         const tableBody = document.querySelector("#submissionsTable tbody");
         tableBody.innerHTML = "";
 
@@ -48,14 +68,16 @@
             </tr>`;
           tableBody.innerHTML += row;
         });
+
+        // ✅ Hide login & show table
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("submissionsTable").style.display = "table";
+
       } catch (err) {
         console.error("Error loading submissions:", err);
         alert("❌ Error loading submissions: " + err.message);
       }
     }
-
-    // Load when page opens
-    loadSubmissions();
   </script>
 </body>
 </html>

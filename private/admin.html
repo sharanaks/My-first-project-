@@ -10,14 +10,15 @@
     th { background: #f2f2f2; }
     #loginBox { margin-bottom: 20px; }
     #submissionsTable { display: none; }
+    #logoutBtn { margin-top: 15px; display: none; }
   </style>
 </head>
 <body>
   <h2>📋 Form Submissions</h2>
 
   <div id="loginBox">
-    <label>Username: <input type="text" id="username" value="admin"></label>
-    <label>Password: <input type="password" id="password" value="secret123"></label>
+    <label>Username: <input type="text" id="username" value=""></label>
+<label>Password: <input type="password" id="password" value=""></label>
     <button onclick="loadSubmissions()">🔑 Login & Load</button>
   </div>
 
@@ -32,6 +33,8 @@
     </thead>
     <tbody></tbody>
   </table>
+
+  <button id="logoutBtn" onclick="logout()">🚪 Logout</button>
 
   <script>
     async function loadSubmissions() {
@@ -69,14 +72,24 @@
           tableBody.innerHTML += row;
         });
 
-        // ✅ Hide login & show table
+        // ✅ Hide login & show table + logout
         document.getElementById("loginBox").style.display = "none";
         document.getElementById("submissionsTable").style.display = "table";
+        document.getElementById("logoutBtn").style.display = "inline-block";
 
       } catch (err) {
         console.error("Error loading submissions:", err);
         alert("❌ Error loading submissions: " + err.message);
       }
+    }
+
+    function logout() {
+      // Reset UI
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("loginBox").style.display = "block";
+      document.getElementById("submissionsTable").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "none";
     }
   </script>
 </body>
